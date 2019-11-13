@@ -1,0 +1,18 @@
+﻿// variables need to be on the page before the snare script is called
+var io_install_flash = false;
+var io_install_stm = false;
+var io_exclude_stm = 12;
+var io_enable_rip = true;
+var io_bbout_element_id = 'vm_DeviceCheckThumbprint'; //ID to set the hidden field
+
+// third party callback function
+var io_bb_callback = function (bb, complete) {
+    if (complete) {
+        document.getElementById(io_bbout_element_id).value = bb;
+    }
+};
+
+// can populate the hidden field using the io_bb_callback function
+// or call get the same values within an object when you call `ioGetBlackbox();`
+
+//IOvation library gets added to the view by the manifest method `IOvation`

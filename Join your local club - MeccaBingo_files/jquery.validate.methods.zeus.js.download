@@ -1,0 +1,275 @@
+/**
+ * Additional Custom Methods for JQuery Validator Plugin
+ * Used on: Pages which require an additional function
+*/
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+// jscs:disable maximumLineLength
+/* global $, jQuery */
+$(function() {
+  'use strict';
+
+  ///jQuery Validation Custom Methods
+  if ((typeof(jQuery.validator) === 'function')) {
+    //> nameRegex
+    //Only letters (Upper and Lowercase), 'spaces', '.' and '-'
+    jQuery.validator.addMethod('nameRegex', function(value, element) {
+      return this.optional(element) || /^[a-zA-Z.' -]+$/.test(value);
+    });
+
+      //> address
+      //Only alphanumeric characters, spaces and the following characters: '(', ')', '&', '_', '-', '/'
+    jQuery.validator.addMethod('address', function (value, element) {
+        //var regEx = new RegExp('^[a-zA-Z0-9 _()&\-\/]+$');
+        return this.optional(element) || /^[a-zA-Z0-9 _()&\-\/]+$/.test(value);
+    });
+
+    //> alphanum
+    //Allows only Alphanumeric characters nothing else.
+    jQuery.validator.addMethod('alphanum', function(value, element) {
+      return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
+    });
+
+    //> postcodeCheck
+    //Allows on valid UK Postcode formats
+    jQuery.validator.addMethod('postcodeCheck', function(value, element) {
+      return this.optional(element) || /^((([A-PR-UWYZ][0-9])|([A-PR-UWYZ][0-9][0-9])|([A-PR-UWYZ][A-HK-Y][0-9])|([A-PR-UWYZ][A-HK-Y][0-9][0-9])|([A-PR-UWYZ][0-9][A-HJKSTUW])|([A-PR-UWYZ][A-HK-Y][0-9][ABEHMNPRVWXY]))\s?([0-9][ABD-HJLNP-UW-Z]{2})|(GIR)\s?(0AA))$/i.test(value);
+    });
+
+    //> tel
+    //Validate UK Telephone Numbers
+    //http://cooshtee.com/blog/2012/06/jquery-validation-for-a-uk-phone-number-and-uk-postcode/
+    jQuery.validator.addMethod('tel', function(phone_number, element) {
+      return this.optional(element) || phone_number.length > 9 && phone_number.match($('#RegexTel').val());
+    }, 'Please specify a valid phone number');
+
+    //> date_selectbox
+    // 'Validate date when using seperate selects ie (30th Feb is not valid)'
+    // http://forum.jquery.com/topic/3-date-boxes-but-validate-whole-date
+    jQuery.validator.addMethod('date_selectbox', function(value, element, options) {
+      var check = false;
+      //Get values from select boxes
+      var day = $(options[0]).val();
+      var month = $(options[1]).val();
+      var year = $(options[2]).val();
+      //Convert values to numbers
+      day = parseInt(day, 10);
+      month = parseInt(month, 10) - 1;
+      year = parseInt(year, 10);
+      //Create new date object with select box values
+      var date = new Date(year, month, day);
+      //Check if the date object matches the selected dates
+      if ((date.getFullYear() === year) && (date.getMonth() === month) && (date.getDate() === day)) {
+        check = true; //Passes date function
+      } else {
+        check = false; //Not a correct date
+      }
+      return this.optional(element) || check;
+    }, 'Please enter a valid date');
+
+    //> require_from_group
+    // to do - rename this to remove underscores for jsHint
+    // 'at least X inputs that match selector Y must be filled.'
+    // http://jsfiddle.net/f887W/11/
+    jQuery.validator.addMethod('require_from_group', function(value, element, options) {
+      var validator = this;
+      var minRequired = options[0];
+      var selector = options[1];
+      var form = $(selector, element.form);
+      var validOrNot = form.filter(function() {
+        return validator.elementValue(this);
+      }).length >= minRequired;
+      var settings = this.settings;
+
+      // remove all events in namespace upload
+      form.off('.require_from_group');
+
+      if (settings.onkeyup) {
+        jQuery(selector, element.form).on({'keyup.require_from_group': function() {form.valid();}});
+      }
+      if (settings.onfocusin) {
+        form.on({'focusin.require_from_group': function() {form.valid();}});
+      }
+      if (settings.click) {
+        form.on({'click.require_from_group': function() {form.valid();}});
+      }
+      if (settings.focusout) {
+        form.on({'focusout.require_from_group': function() {form.valid();}});
+      }
+      return validOrNot;
+    }, jQuery.validator.format('Please fill at least {0} of these fields.'));
+
+    //> notEqual
+    // Make the user change from default options
+    jQuery.validator.addMethod('notEqual', function(value, element, param) {
+      return this.optional(element) || value !== param;
+    }, 'Please specify a different (non-default) value');
+
+    //> greaterThan
+    // Check if provided date is greaterThan another provided date
+    jQuery.validator.addMethod('greaterThan', function(value, element, params) {
+      if (!/Invalid|NaN/.test(new Date(value))) {
+        return new Date(value) > new Date($(params).val());
+      }
+      return isNaN(value) && isNaN($(params).val()) || (Number(value) > Number($(params).val()));
+    }, 'Must be greater than {0}.');
+
+    //> lessThan
+    // Check if provided date is lessThan another provided date
+    jQuery.validator.addMethod('lessThan', function(value, element, params) {
+      if (!/Invalid|NaN/.test(new Date(value))) {
+        return new Date(value) < new Date($(params).val());
+      }
+      return isNaN(value) && isNaN($(params).val()) || (Number(value) < Number($(params).val()));
+    }, 'Must be Less than {0}.');
+
+    //> customRule
+    // Allows a custom rule to be make within the validator code
+    jQuery.validator.addMethod('customRule', function(value, element, params) {
+      return this.optional(element) || params !== true;
+    }, jQuery.validator.format('Not Valid'));
+
+    //> checkDOB_selectbox
+    // 'Validate DOB is over 18 when using seperate selects'
+    // http://pixelfear.com/blog/validating-a-minimum-age-with-jquery-validate
+    jQuery.validator.addMethod('checkDOB_selectbox', function(value, element, options) {
+      //Get values from select boxes
+      var day = $(options[0]).val();
+      var month = $(options[1]).val();
+      var year = $(options[2]).val();
+      var minAge =  18;
+
+      var mydate = new Date();
+      // Validate if user has turned 18 today
+      mydate.setFullYear(year, month - 1, day - 1);
+
+      var currdate = new Date();
+      currdate.setFullYear(currdate.getFullYear() - minAge);
+      return currdate > mydate;
+    }, 'You must be at least 18 years of age.');
+
+    jQuery.validator.addMethod('dob', function(value, element, param) {
+      var day = $('#forgottenUsernameDOBDay').val();
+      var month = $('#forgottenUsernameDOBMonth').val();
+      var year = $('#forgottenUsernameDOBYear').val();
+      var date = new Date(year, month - 1, day);
+
+      if (day === '' || month === '' || year === '') {
+        return this.optional(element) || false;
+      }
+
+      return this.optional(element) || !/Invalid|NaN/.test(date);
+    }, 'Please enter a valid Date Of Birth');
+
+    //> zeusRemote
+    // 'Used to check against a service for a particular value that is sent, such as email and username'
+    jQuery.validator.addMethod('zeusRemote', function(value, element, param) {
+      var url = '';
+
+      if (this.optional(element)) {
+        return 'dependency-mismatch';
+      }
+
+      var previous = this.previousValue(element);
+      var validator;
+      var data;
+
+      if (!this.settings.messages[element.name]) {
+        this.settings.messages[element.name] = {};
+      }
+      previous.originalMessage = this.settings.messages[element.name].remote;
+      this.settings.messages[element.name].remote = previous.message;
+
+      param = typeof param === 'string' && {url: param} || param;
+
+      if (previous.old === value) {
+        return previous.valid;
+      }
+
+      previous.old = value;
+      validator = this;
+      this.startRequest(element);
+      data = {};
+      data[element.name] = value;
+
+      var queryString = param.queryString ? '?' + param.queryString + '=' : '';
+      url = param.url + queryString + encodeURIComponent(value);
+
+      validator.pending = true;
+
+      if (validator.pending) {
+        if (!$(element).siblings('.pending').length) {
+          $(element).after('<span class="pending"></span>');
+        }
+      }
+
+      $.ajax($.extend(true, {
+        url: url,
+        mode: 'abort',
+        port: 'validate' + element.name,
+        dataType: 'json',
+        context: validator.currentForm,
+        success: function(response) {
+          var valid = response === false || response === 'false';
+          var submitted;
+
+          validator.settings.messages[element.name].remote = previous.originalMessage;
+          if (valid) {
+            submitted = validator.formSubmitted;
+            validator.prepareElement(element);
+            validator.formSubmitted = submitted;
+            validator.successList.push(element);
+            delete validator.invalid[element.name];
+            validator.showErrors();
+            validator.pending = false;
+            $('.pending').remove();
+          } else {
+            errorHandler();
+          }
+          previous.valid = valid;
+          validator.stopRequest(element, valid);
+        },
+        error: function() {
+          validator.settings.messages[element.name].remote = previous.originalMessage;
+          errorHandler();
+          previous.valid = false;
+          validator.stopRequest(element, false);
+        }
+      }, url));
+
+      var errorHandler = function() {
+        var errors = {};
+        var message = validator.defaultMessage(element, 'zeusRemote');
+        errors[element.name] = previous.message = $.isFunction(message) ? message(value) : message;
+        validator.invalid[element.name] = true;
+        validator.showErrors(errors);
+        validator.pending = false;
+        $('.pending').remove();
+      };
+
+      return 'pending';
+    }, 'Already in use.');
+
+    //> currency
+    // Currency validation method for the jQuery Validation plugin. Decimal place is optional but if included, it requires 2 places.
+    // http://stackoverflow.com/a/11780743
+    jQuery.validator.addMethod('currency', function(value, element) {
+      return this.optional(element) || /^[0-9]\d*(((,\d{3}) {1})?(\.\d{0,2})?)$/.test(value);
+    }, 'Please specify a valid amount');
+
+    //> Alphanum with Underscores
+    // Allows Alphanumeric characters and underscores, nothing else.
+    jQuery.validator.addMethod('alphanumunderscore', function(value, element) {
+      return this.optional(element) || /^[a-zA-Z0-9_]+$/.test(value);
+    });
+
+    jQuery.validator.addMethod("customValidEmail", function (value, element) {
+      return this.optional(element) || (/^(([^<>()[\]\\.,;:\s@\"`!$%^&*={}'#~?\/]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value));
+    }, "Please enter a valid Email Address");
+
+    //> Current and New password comparison
+    // used in change password forms to check wither if the new password is the same as the current
+    jQuery.validator.addMethod("notEqualToCurrentPassword", function(value, element) {
+      return $('#currentPassword').val() != $('#newPassword').val();
+    });
+  }
+});
