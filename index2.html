@@ -1969,50 +1969,21 @@ data-target="loginModal" data-toggle="modal">
 				number = number.replace('+','');
 				
 				if (number.charAt(0) === '0') {
-<<<<<<< HEAD
-<<<<<<< HEAD
 					number = "44" + number.substr(1);
 				}
 				
 				
 				var joinClubFirstName = $('#join-club-first-name');
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> ed5fa11... none
 				var name = joinClubFirstName.val();
 				
-=======
-					number = "44" + number.val().substr(1);
-=======
-					number = "44" + number.substr(1);
->>>>>>> 1108f19... none
-				}
-				
->>>>>>> 371497d... none
-=======
-				
->>>>>>> 5f121ef... none
 				$.ajax({
-						url: 'https://hooks.imiconnect.io/events/OUSB4JX54G',
+						url: 'https://hooks.imiconnect.io/events/AWDBLWCHAT',
 						type: 'POST',
 						contentType: "application/json",
 						dataType: "json",
 						data: JSON.stringify({
 							"msisdn": number,
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 							"name" : name
-=======
-							"name" : joinClubFirstName.val()
->>>>>>> 5f121ef... none
-=======
-							"name" : name;
->>>>>>> ed5fa11... none
-=======
-							"name" : name
->>>>>>> 5cea16d... none
 						})
 				})
 					.done(function (data) {
