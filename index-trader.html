@@ -1,0 +1,164 @@
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Trader</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+    <link href="blog.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container">
+      <header class="blog-header py-3">
+        <div class="row flex-nowrap justify-content-between align-items-center">
+
+			<div class="col-md-12 px-0">
+			  <h4 class="display-7 font-italic">Traderz intranet</h4>
+			</div>
+		
+        </div>
+      </header>
+
+      <div class="nav-scroller py-1 mb-2">
+        <nav class="nav d-flex justify-content-between">
+        </nav>
+      </div>
+
+      <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">
+        <div class="col-md-12 px-0">
+          <h4 class="display-7 font-italic">Trader Sign Up - Outbound document collection</h4>
+          <p class="lead my-3">
+		  
+		  <input type="text" id="join-club-first-name" name="FirstName" class="name-input" placeholder="Name">
+
+		  <input type="text" id="join-club-number" name="Number" class="name-input" placeholder="Phone Number">
+		  
+		  <select id="join-club-role" class="name-input" style="padding:2px 0px 3px 0px;" placeholder="Role">
+			 <option selected="selected">Please Select</option>
+			 <option value="plumber">Plumber</option>
+			 <option value="gas-engineer">Gas Engineer</option>
+		   </select>
+		  
+		  
+		  </p>
+          <p class="lead mb-0">
+		  
+		  <a href="#" id="send-signup" class="text-white font-weight-bold">Send</a>
+		  
+		  <div id="complete-message" ></div>
+		  
+		  </p>
+        </div>
+      </div>
+
+
+	  
+	        <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">
+        <div class="col-md-12 px-0">
+          <h4 class="display-7 font-italic">Trader Sign Up - Provided documents not suitable</h4>
+          <p class="lead my-3">
+		  
+		  <input type="text" id="join-club-first-name" name="FirstName" class="name-input" placeholder="Name">
+
+		  <input type="text" id="join-club-number" name="Number" class="name-input" placeholder="Phone Number">
+		  
+		  <select id="join-club-role" class="name-input" style="padding:2px 0px 3px 0px;" placeholder="Role">
+			 <option selected="selected">Please Select</option>
+			 <option value="plumber">Plumber</option>
+			 <option value="gas-engineer">Gas Engineer</option>
+		   </select>
+		  
+		  
+		  </p>
+          <p class="lead mb-0">
+		  
+		  <a href="#" id="send-signup" class="text-white font-weight-bold">Send</a>
+		  
+		  <div id="complete-message" ></div>
+		  
+		  </p>
+        </div>
+      </div>
+	  
+	  
+	  
+    </div>
+
+    <main role="main" class="container">
+
+
+    </main><!-- /.container -->
+
+    <footer class="blog-footer">
+         <p>
+         <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <script>
+	  
+	$(document).ready(function () {
+	
+		var sendSignup = $('#send-signup');
+	
+		sendSignup.click(function (){
+		
+			var joinClubFirstName = $('#join-club-first-name');
+			var name = joinClubFirstName.val();
+		
+			var joinClubNumber = $('#join-club-number');
+			var number = joinClubNumber.val();
+			
+			var joinClubRole = $('#join-club-role');
+			var role = joinClubRole.val();
+		
+		
+		
+		debugger;
+			
+			$.ajax({
+				url: 'https://hooks.imiconnect.io/events/SBWTI3729J',
+				type: 'POST',
+				contentType: "application/json",
+				dataType: "json",
+				data: JSON.stringify({
+					"number": number,
+					"name" : name,
+					"role" : role
+				})
+			})
+				.done(function (data) {
+					console.log('Woo')
+			
+				var completeMessage = $('#complete-message');
+				completeMessage.html('done')
+			
+			})
+		
+		
+		});
+	
+
+	
+	});	 
+	  
+    </script>
+  
+
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="250" viewBox="0 0 200 250" preserveAspectRatio="none" style="display: none; visibility: hidden; position: absolute; top: -100%; left: -100%;"><defs><style type="text/css"></style></defs><text x="0" y="13" style="font-weight:bold;font-size:13pt;font-family:Arial, Helvetica, Open Sans, sans-serif">Thumbnail</text></svg></body></html>
